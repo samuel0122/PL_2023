@@ -1,0 +1,36 @@
+import java.io.*;
+
+class testLexico {
+
+    public static String toString(Token t){
+		return "("+t.fila+","+t.columna+"): "+t.lexema+" es de tipo "+t.tipo+'\n'; 
+		//return "("+t.fila+","+t.columna+"): "+t.lexema+" es de tipo "+Token.nombreToken.get(t.tipo)+'\n'; 
+  }
+ 
+
+    public static void main(String[] args) {
+
+        AnalizadorLexico al;
+        Token t;
+
+        RandomAccessFile entrada = null;
+
+        try {
+            entrada = new RandomAccessFile(args[0],"r");
+            al = new AnalizadorLexico(entrada);
+
+            while ((t=al.siguienteToken()).tipo != Token.EOF) 
+            {
+                // System.out.println("Token: "+ t.fila + ","
+                //                             + t.columna+ " " 
+                //                             + t.lexema+ "  -> "
+                //                             + toString(t));
+            
+                System.out.printf("Token: %d,%d %s  -> %s", t.fila, t.columna, t.lexema, toString(t));
+            }
+        }
+        catch (FileNotFoundException e) {
+          System.out.println("Error, fichero no encontrado: " + args[0]);
+        }
+    }
+}
