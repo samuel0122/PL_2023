@@ -384,6 +384,8 @@ public class AnalizadorLexico
                 // ERROR
                 checkError(nuevoEstado, previousC);
                 
+                ++currentColumn;
+
                 // Ignore comentary
                 if(nuevoEstado == endComentary)
                 {
@@ -397,8 +399,6 @@ public class AnalizadorLexico
                     System.out.println("ERROR INESPERADO");
                     System.exit(-1);
                 }
-                
-                ++currentColumn;
 
                 if(nuevoEstado != initialState && nuevoEstado != commentaryLoop && nuevoEstado != endingComentary) 
                 {

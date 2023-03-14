@@ -7,7 +7,7 @@ public class Token {
 
 	public String lexema;
 	public static final ArrayList<String> nombreToken = new ArrayList<String>();
-	public static final ArrayList<String> nombreTokenErroneo = new ArrayList<String>();
+	//public static final ArrayList<String> nombreTokenErroneo = new ArrayList<String>();
 
     
 	static{
@@ -37,38 +37,9 @@ public class Token {
 		nombreToken.add("identificador");
 		nombreToken.add("numero entero");
 		nombreToken.add("numero real");
-		nombreToken.add("final de fichero");
+		nombreToken.add("fin de fichero");
 	}
 
-	static{
-		nombreTokenErroneo.add("'('");
-		nombreTokenErroneo.add("')'");
-		nombreTokenErroneo.add("'* / //'");
-		nombreTokenErroneo.add("'+ -'");
-		nombreTokenErroneo.add("'< > <= >= = <>'");
-		nombreTokenErroneo.add("';'");
-		nombreTokenErroneo.add("':'");
-		nombreTokenErroneo.add("','");
-		nombreTokenErroneo.add("':='");
-		nombreTokenErroneo.add("'var'");
-		nombreTokenErroneo.add("'real'");
-		nombreTokenErroneo.add("'entero'");
-		nombreTokenErroneo.add("'algoritmo'");
-		nombreTokenErroneo.add("'blq'");
-		nombreTokenErroneo.add("'fblq'");
-		nombreTokenErroneo.add("'funcion'");
-		nombreTokenErroneo.add("'si'");
-		nombreTokenErroneo.add("'entonces'");
-		nombreTokenErroneo.add("'sino'");
-		nombreTokenErroneo.add("'fsi'");
-		nombreTokenErroneo.add("'mientras'");
-		nombreTokenErroneo.add("'hacer'");
-		nombreTokenErroneo.add("'escribir'");
-		nombreTokenErroneo.add("'identificador'");
-		nombreTokenErroneo.add("'numero entero'");
-		nombreTokenErroneo.add("'numero real'");
-		nombreTokenErroneo.add("'final de fichero'");
-	}
 
         // para imprimir la cadena asociada a un token 't' hay que poner:
         //  System.out.println(Token.nombreToken.get(t.tipo);

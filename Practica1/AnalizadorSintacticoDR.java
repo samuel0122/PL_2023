@@ -27,7 +27,7 @@ public class AnalizadorSintacticoDR
         if(token.tipo == Token.EOF)
             System.err.printf("Error sintactico: encontrado fin de fichero, esperaba%s%n", argsEsperados.toString());
         else
-            System.err.printf("Error sintactico (%d,%d): encontrado %s, esperaba%s%n", token.fila, token.columna, Token.nombreTokenErroneo.get(token.tipo), argsEsperados.toString());
+            System.err.printf("Error sintactico (%d,%d): encontrado '%s', esperaba%s%n", token.fila, token.columna, token.lexema, argsEsperados.toString());
         
         System.exit(-1);
     }
@@ -48,7 +48,10 @@ public class AnalizadorSintacticoDR
     public final void comprobarFinFichero()
     {
         if(token.tipo != Token.EOF)
+        {
+            terminosEsperados.add(Token.EOF);
             errorSintaxis();
+        }
         
         System.out.println(reglasAplicadas.toString());
     }
