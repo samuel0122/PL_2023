@@ -25,6 +25,7 @@ public class TraductorDR
     private TablaSimbolos tsActual;
     private Token token;
     private AnalizadorLexico lexico;
+    private StringBuilder reglasAplicadas;
     private TreeSet<Integer> terminosEsperados;
 
 
@@ -74,6 +75,7 @@ public class TraductorDR
         terminosEsperados = new TreeSet<Integer>();
         this.lexico = lexico;
         token = lexico.siguienteToken();
+        reglasAplicadas = new StringBuilder();
         tsActual = new TablaSimbolos(null);
     }
     
@@ -115,6 +117,7 @@ public class TraductorDR
             errorSintaxis();
         }
         
+        // System.out.println(reglasAplicadas.toString());
     }
 
     private final String traducirTipo(Token tipo)
@@ -128,7 +131,7 @@ public class TraductorDR
         switch(token.tipo)
         {
             case Token.ALGORITMO:
-            {
+                reglasAplicadas.append(" 1");
 
                 Token algoritmo = emparejar(Token.ALGORITMO);
                 Token id = emparejar(Token.ID);
@@ -139,7 +142,6 @@ public class TraductorDR
                 
                 
                 return "// " + algoritmo.lexema + " " + id.lexema + '\n' + tradVsp + "int main() " + tradBloque;
-            }
             
             default: 
                 terminosEsperados.add(Token.ALGORITMO);
@@ -155,13 +157,12 @@ public class TraductorDR
         {
             case Token.FUNCION:
             case Token.VAR:
-            {
+                reglasAplicadas.append(" 2");
 
                 String tradUnsp = Unsp(th);
                 String tradVspp = Vspp(th);
                 
                 return tradUnsp + tradVspp;
-            }
             
             default: 
                 terminosEsperados.add(Token.FUNCION);
@@ -177,13 +178,12 @@ public class TraductorDR
         {
             case Token.FUNCION:
             case Token.VAR:
-            {
-
+                reglasAplicadas.append(" 3");
+                
                 String tradUnsp = Unsp(th);
                 String tradVspp = Vspp(th);
                 
                 return tradUnsp + tradVspp;
-            }
             
             case Token.BLQ:
                 return "";
@@ -203,7 +203,7 @@ public class TraductorDR
         switch(token.tipo)
         {
             case Token.FUNCION:
-            {
+                reglasAplicadas.append(" 5");
 
                 emparejar(Token.FUNCION);
                 Token id = emparejar(Token.ID);
@@ -229,16 +229,14 @@ public class TraductorDR
                 tsActual = tsActual.getAmbitoAnterior();
 
                 return tradVsp + traducirTipo(tipo) + ' ' + nombreFuncionBloque + " () " + tradBloque;
-            }
             
             case Token.VAR:
-            {
+                reglasAplicadas.append(" 6");
 
                 emparejar(Token.VAR);
                 String tradLV = LV(th);
                 
                 return tradLV;
-            }
 
             default: 
                 terminosEsperados.add(Token.FUNCION);
@@ -254,13 +252,12 @@ public class TraductorDR
         switch(token.tipo)
         {
             case Token.ID:
-            {
+                reglasAplicadas.append(" 7");
 
                 String tradV = V(th);
                 String tradLVp = LVp(th);
                 
                 return tradV + tradLVp;
-            }
             
             default:
                 terminosEsperados.add(Token.ID);
@@ -275,17 +272,18 @@ public class TraductorDR
         switch(token.tipo)
         {
             case Token.ID:
-            {
-
+                reglasAplicadas.append(" 8");
+                
                 String tradV = V(th);
                 String tradLVp = LVp(th);
 
                 return tradV + tradLVp;
-            }
             
             case Token.FUNCION:
             case Token.VAR:
             case Token.BLQ:
+
+                reglasAplicadas.append(" 9");
 
                 return "";
 
@@ -305,7 +303,7 @@ public class TraductorDR
         switch(token.tipo)
         {
             case Token.ID:
-            {
+                reglasAplicadas.append(" 10");
 
                 if(th.equals(""))
                     th = "main";
@@ -333,7 +331,6 @@ public class TraductorDR
                 }
 
                 return traducirTipo(tipo) + ' ' + th + id.lexema + tradLid + ";\n";
-            }
                 
             default: 
                 terminosEsperados.add(Token.ID);
@@ -348,8 +345,8 @@ public class TraductorDR
         switch(token.tipo)
         {
             case Token.COMA:
-            {
-
+                reglasAplicadas.append(" 11");
+                
                 emparejar(Token.COMA);
 
                 Token id = emparejar(Token.ID);
@@ -359,9 +356,9 @@ public class TraductorDR
                 String tradLid = Lid(th, vTokens);
                 
                 return ',' + th + id.lexema + tradLid;
-            }
 
             case Token.DOSP:
+                reglasAplicadas.append(" 12");
 
                 return "";
                 
@@ -379,10 +376,12 @@ public class TraductorDR
         switch(token.tipo)
         {
             case Token.ENTERO:
+                reglasAplicadas.append(" 13");
 
                 return emparejar(Token.ENTERO);
 
             case Token.REAL:
+                reglasAplicadas.append(" 14");
 
                 return emparejar(Token.REAL);
                 
@@ -400,14 +399,13 @@ public class TraductorDR
         switch(token.tipo)
         {
             case Token.BLQ:
-            {
+                reglasAplicadas.append(" 15");
 
                 emparejar(Token.BLQ);
                 String tradSInstr = SInstr(th);
                 emparejar(Token.FBLQ);
 
                 return "{\n" + tradSInstr + "}\n";
-            }
 
             default: 
             terminosEsperados.add(Token.BLQ);
@@ -426,13 +424,12 @@ public class TraductorDR
             case Token.SI:
             case Token.MIENTRAS:
             case Token.ESCRIBIR:
-            {
+                reglasAplicadas.append(" 16");
 
                 String tradInstr = Instr(th);
                 String tradSInstrp = SInstrp(th);
                 
                 return tradInstr + tradSInstrp;
-            }
 
             default: 
             terminosEsperados.add(Token.BLQ);
@@ -451,16 +448,16 @@ public class TraductorDR
         switch(token.tipo)
         {
             case Token.PYC:
-            {
+                reglasAplicadas.append(" 17");
 
                 emparejar(Token.PYC);
                 String tradInstr = Instr(th);
                 String tradSInstrp = SInstrp(th);
                 
                 return tradInstr + tradSInstrp;
-            }
 
             case Token.FBLQ:
+                reglasAplicadas.append(" 18");
 
                 return "";
 
@@ -482,6 +479,7 @@ public class TraductorDR
         {
             case Token.BLQ:
             {
+                reglasAplicadas.append(" 19");
 
                 String tradBloque = Bloque(th);
                 
@@ -490,6 +488,7 @@ public class TraductorDR
 
             case Token.ID:
             {
+                reglasAplicadas.append(" 20");
 
                 Token id   = emparejar(Token.ID);
                 Token asig = emparejar(Token.ASIG);
@@ -533,6 +532,7 @@ public class TraductorDR
             
             case Token.SI:
             {
+                reglasAplicadas.append(" 21");
                 
                 Token si = emparejar(Token.SI);
                 EType eType = E();
@@ -550,6 +550,7 @@ public class TraductorDR
 
             case Token.MIENTRAS:
             {
+                reglasAplicadas.append(" 24 ");
 
                 Token mientras = emparejar(Token.MIENTRAS);
                 EType eType = E();
@@ -566,6 +567,7 @@ public class TraductorDR
 
             case Token.ESCRIBIR:
             {
+                reglasAplicadas.append(" 25");
 
                 Token escribir = emparejar(Token.ESCRIBIR);
                 emparejar(Token.PARI);
@@ -597,6 +599,7 @@ public class TraductorDR
         {
             case Token.FSI:
             {
+                reglasAplicadas.append(" 22");
 
                 emparejar(Token.FSI);
                 
@@ -605,6 +608,7 @@ public class TraductorDR
 
             case Token.SINO:
             {
+                reglasAplicadas.append(" 23");
 
                 emparejar(Token.SINO);
                 String tradInstr = Instr(th);
@@ -630,8 +634,8 @@ public class TraductorDR
             case Token.NENTERO:
             case Token.NREAL:
             case Token.PARI:
-            {
-
+                reglasAplicadas.append(" 26");
+            
                 EType eExpr = Expr();
                 EType eEp = Ep(eExpr.tipo);
 
@@ -655,7 +659,6 @@ public class TraductorDR
                 }
     
                 break;
-            }
                 
             default: 
             terminosEsperados.add(Token.ID);
@@ -673,6 +676,7 @@ public class TraductorDR
         switch(token.tipo)
         {
             case Token.OPREL:
+                reglasAplicadas.append(" 27");
 
                 Token oprel = emparejar(Token.OPREL);
                 EType eExpr = Expr();
@@ -705,6 +709,7 @@ public class TraductorDR
             case Token.ENTONCES:
             case Token.HACER:
             case Token.PARD:
+                reglasAplicadas.append(" 28");
 
                 return null;
                 
@@ -731,11 +736,28 @@ public class TraductorDR
             case Token.NENTERO:
             case Token.NREAL:
             case Token.PARI:
+                reglasAplicadas.append(" 29");
 
                 EType eTerm = Term();
-                Exprp(eTerm);
+                EType eExprp = Exprp(eTerm.tipo);
                 
-                return eTerm;
+                // Todos los Expr son Int
+                if(eExprp.tipo == tipoInt)
+                    return new EType(tipoInt, eTerm.trad + eExprp.trad);
+
+                // Si hay algún Expr Double 
+                if(eExprp.tipo == tipoDouble)
+                {
+                    // Si este es double, operador Double
+                    if(eTerm.tipo == tipoDouble)
+                        return new EType(tipoDouble, eTerm.trad + eExprp.trad);
+    
+                    // Si este es Int, operador Double y casteo
+                    if(eTerm.tipo == tipoInt)
+                        return new EType(tipoDouble, "itor(" + eTerm.trad + ')' + eExprp.trad);
+                }
+                
+                break;
                 
             default: 
             terminosEsperados.add(Token.ID);
@@ -748,38 +770,39 @@ public class TraductorDR
         return null;
     }
 
-    private final void Exprp(EType tH)
+    private final EType Exprp(int tipoH)
     {
         switch(token.tipo)
         {
             case Token.OPAS:
             {
+                reglasAplicadas.append(" 30");
 
                 Token opas = emparejar(Token.OPAS);
                 EType eTerm = Term();
 
                 // Si hasta ahora tengo int, el tipo dependerá del eFactor (si es int sigue, si es double cambia)
-                if(tH.tipo == tipoInt && eTerm.tipo == tipoInt)
-                {
-                    tH.trad += ' ' + opas.lexema + "i " + eTerm.trad;
-                }
-                else if(tH.tipo == tipoInt && eTerm.tipo == tipoDouble)
-                {
-                    tH.trad = "itor(" + tH.trad + ") " + opas.lexema + "r " + eTerm.trad;
-                    tH.tipo = tipoDouble;
-                }
-                else if(tH.tipo == tipoDouble && eTerm.tipo == tipoDouble)
-                {
-                    tH.trad += ' ' + opas.lexema + "r " + eTerm.trad;
-                }
-                else if(tH.tipo == tipoDouble && eTerm.tipo == tipoInt)
-                {
-                    tH.trad += ' ' + opas.lexema + "r itor(" + eTerm.trad + ')';
-                }
+                if(tipoH == tipoInt)
+                    tipoH = eTerm.tipo;
                 
-                Exprp(tH);
+                EType eExprp = Exprp(tipoH);
                 
-                break;
+                // Todos los Expr son Int
+                if(eExprp.tipo == tipoInt)
+                    return new EType(tipoInt, ' ' + opas.lexema + "i " + eTerm.trad + eExprp.trad);
+
+                // Si hay algún Expr Double
+                if(eExprp.tipo == tipoDouble)
+                {
+                    // Si este es double, operador Double
+                    if(eTerm.tipo == tipoDouble)
+                        return new EType(tipoDouble, ' ' + opas.lexema + "r " + eTerm.trad + eExprp.trad);
+
+                    // Si este es Int, operador Double y casteo
+                    if(eTerm.tipo == tipoInt)
+                        return new EType(tipoDouble, ' ' + opas.lexema + "r itor(" + eTerm.trad + ')' + eExprp.trad);
+                }            
+
             }
             
             case Token.PYC:
@@ -790,8 +813,9 @@ public class TraductorDR
             case Token.HACER:
             case Token.PARD:
             case Token.OPREL:
+                reglasAplicadas.append(" 31");
 
-                break;
+                return new EType(tipoH, "");
 
             default: 
             terminosEsperados.add(Token.OPAS);
@@ -806,7 +830,7 @@ public class TraductorDR
             errorSintaxis();
         }
      
-        return;
+        return null;
     }
 
     private final EType Term()
@@ -817,13 +841,29 @@ public class TraductorDR
             case Token.NENTERO:
             case Token.NREAL:
             case Token.PARI:
-            {
+
+                reglasAplicadas.append(" 32");
 
                 EType eFactor = Factor();
-                Termp(eFactor);
+                EType eTermp = Termp(eFactor.tipo);
+                
+                // Todos los Term son Int
+                if(eTermp.tipo == tipoInt)
+                    return new EType(tipoInt, eFactor.trad + eTermp.trad);
+
+                // Si hay algún Term Double 
+                if(eTermp.tipo == tipoDouble)
+                {
+                    // Si este es double, operador Double
+                    if(eFactor.tipo == tipoDouble)
+                        return new EType(tipoDouble, eFactor.trad + eTermp.trad);
     
-                return eFactor;
-            }
+                    // Si este es Int, operador Double y casteo
+                    if(eFactor.tipo == tipoInt)
+                        return new EType(tipoDouble, "itor(" + eFactor.trad + ')' + eTermp.trad);
+                }
+            
+                break;
 
             default: 
             terminosEsperados.add(Token.ID);
@@ -836,62 +876,52 @@ public class TraductorDR
         return null;
     }
 
-    private final void Termp(EType tH)
+    private final EType Termp(int tipoH)
     {
         switch(token.tipo)
         {
             case Token.OPMD:
             {
+                reglasAplicadas.append(" 33");
 
                 Token opmd = emparejar(Token.OPMD);
                 EType eFactor = Factor();
 
-                if(tH.tipo == tipoInt && eFactor.tipo == tipoInt)
-                {
-                    // Si es división real y no se convierte los enteros, convertirlos
-                    if(opmd.lexema.equals("/"))
-                    {
-                        tH.trad = "itor(" + tH.trad + ") " + opmd.lexema + "r itor(" + eFactor.trad + ')';
-                        tH.tipo = tipoDouble;
-                    }
-                    else
-                    {
-                        // Si es división entera, traducir operador
-                        if(opmd.lexema.equals("//"))
-                            opmd.lexema = "/";
-
-                        tH.trad += ' ' + opmd.lexema + "i " + eFactor.trad;
-                    }
-                }
-                else if(tH.tipo == tipoInt && eFactor.tipo == tipoDouble)
-                {
-                    // Si es división entera, error
-                    if(opmd.lexema.equals("//"))
-                        errorSemantico(ERR_DIVENTERA, opmd.fila, opmd.columna, opmd.lexema);
-
-                    tH.trad = "itor(" + tH.trad + ") " + opmd.lexema + "r " + eFactor.trad;
-                    tH.tipo = tipoDouble;
-                }
-                else if(tH.tipo == tipoDouble && eFactor.tipo == tipoDouble)
-                {
-                    // Si es división entera, error
-                    if(opmd.lexema.equals("//"))
-                        errorSemantico(ERR_DIVENTERA, opmd.fila, opmd.columna, opmd.lexema);
+                // Si hasta ahora tengo int, el tipo dependerá del eFactor (si es int sigue, si es double cambia)
+                if(tipoH == tipoInt)
+                    tipoH = eFactor.tipo;
                 
-                    tH.trad += ' ' + opmd.lexema + "r " + eFactor.trad;
-                }
-                else if(tH.tipo == tipoDouble && eFactor.tipo == tipoInt)
+                // Se trata de operación Double y se traduce a /r
+                if(opmd.lexema.equals("/"))
+                    tipoH = tipoDouble;
+                
+                EType eTermp = Termp(tipoH);
+                
+                if(opmd.lexema.equals("//"))
                 {
-                    // Si es división entera, error
-                    if(opmd.lexema.equals("//"))
+                    // Debe ser todo tipo int y se traduce a /i
+                    if(tipoH != tipoInt || eTermp.tipo != tipoInt)
                         errorSemantico(ERR_DIVENTERA, opmd.fila, opmd.columna, opmd.lexema);
                     
-                    tH.trad += ' ' + opmd.lexema + "r itor(" + eFactor.trad + ')';
+                    opmd.lexema = "/";
                 }
-                
-                Termp(tH);
-                
-                break;
+
+                // Todos los Term son Int
+                if(eTermp.tipo == tipoInt)
+                    return new EType(tipoInt, ' ' + opmd.lexema + "i " + eFactor.trad + eTermp.trad);
+
+                // Si hay algún Term Double 
+                if(eTermp.tipo == tipoDouble)
+                {
+                    // Si este es double, operador Double
+                    if(eFactor.tipo == tipoDouble)
+                        return new EType(tipoDouble, ' ' + opmd.lexema + "r " + eFactor.trad + eTermp.trad);
+    
+                    // Si este es Int, operador Double y casteo
+                    if(eFactor.tipo == tipoInt)
+                        return new EType(tipoDouble, ' ' + opmd.lexema + "r itor(" + eFactor.trad + ')' + eTermp.trad);
+                }
+            
             }
             
             case Token.PYC:
@@ -902,9 +932,12 @@ public class TraductorDR
             case Token.HACER:
             case Token.PARD:
             case Token.OPREL:
-            case Token.OPAS:                
-
-                break;
+            case Token.OPAS:
+            {
+                reglasAplicadas.append(" 34");
+                
+                return new EType(tipoH, "");
+            }
 
             default: 
             terminosEsperados.add(Token.OPMD);
@@ -920,6 +953,7 @@ public class TraductorDR
             errorSintaxis();
         }
     
+        return null;
     }
 
     private final EType Factor()
@@ -928,6 +962,7 @@ public class TraductorDR
         {
             case Token.ID:
             {
+                reglasAplicadas.append(" 35");
                 
                 Token id = emparejar(Token.ID);
                 Simbolo idSimbolo = tsActual.buscar(id.lexema);
@@ -945,6 +980,7 @@ public class TraductorDR
             
             case Token.NENTERO:
             {
+                reglasAplicadas.append(" 36");
 
                 Token entero = emparejar(Token.NENTERO);
 
@@ -953,6 +989,7 @@ public class TraductorDR
             
             case Token.NREAL:
             {
+                reglasAplicadas.append(" 37");
 
                 Token real = emparejar(Token.NREAL);
 
@@ -961,6 +998,7 @@ public class TraductorDR
 
             case Token.PARI:
             {
+                reglasAplicadas.append(" 38");
 
                 emparejar(Token.PARI);
                 EType expr = Expr();

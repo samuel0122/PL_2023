@@ -5,34 +5,6 @@ import javax.lang.model.util.ElementScanner6;
 
 public class TraductorDR
 {
-    private class TipoClass{
-        public TipoClass(Token tipoToken)
-        {
-            boolean isInt = tipoToken.tipo == Token.ENTERO;
-
-            this.tipo =  isInt ? tipoInt : tipoDouble;
-            this.trad =  isInt ? "int" : "double";
-        }
-
-        public int tipoToSimbolo()
-        {
-            switch(this.tipo)
-            {
-                case tipoInt:
-                    return Simbolo.ENTERO;
-                
-                case tipoDouble:
-                    return Simbolo.REAL;
-                
-                default:
-                    //TODO: Error
-                    return -1;
-            }
-        }
-
-        public String trad;
-        public int tipo;
-    }
 
     private class EType{
         public EType(int tipo, String trad)
@@ -43,7 +15,7 @@ public class TraductorDR
 
         public String print()
         {
-            return (this.tipo == Simbolo.ENTERO) ? "%d" : "%g";
+            return (this.tipo == tipoInt) ? "%d" : "%g";
         }
 
         public int tipo;
@@ -148,6 +120,11 @@ public class TraductorDR
         // System.out.println(reglasAplicadas.toString());
     }
 
+    private final String traducirTipo(Token tipo)
+    {
+        return (tipo.tipo == Token.ENTERO) ? "int" : "double";
+    }
+
     
     public String S()
     {
@@ -231,10 +208,10 @@ public class TraductorDR
                 emparejar(Token.FUNCION);
                 Token id = emparejar(Token.ID);
                 emparejar(Token.DOSP);
-                TipoClass tipo = Tipo();
+                Token tipo = Tipo();
                 emparejar(Token.PYC);
 
-                String nombreFuncionBloque = (th == "") ? id.lexema : th + '_' + id.lexema;
+                String nombreFuncionBloque = (th.equals("")) ? id.lexema : th + '_' + id.lexema;
                 
                 // Inserto la función como nuevo símbolo
                 if(!tsActual.nuevoSimbolo(new Simbolo(id.lexema, nombreFuncionBloque, Simbolo.FUNCION)))
@@ -243,7 +220,7 @@ public class TraductorDR
                 // Creo nuevo ámbito para este algoritmo
                 tsActual = new TablaSimbolos(tsActual);
 
-                String tradVsp = Vsp(th + id.lexema + '_');
+                String tradVsp = Vsp(nombreFuncionBloque);
                 String tradBloque = Bloque(nombreFuncionBloque);
 
                 emparejar(Token.PYC);
@@ -251,7 +228,7 @@ public class TraductorDR
                 // Recupero el ámbito anterior al algoritmo
                 tsActual = tsActual.getAmbitoAnterior();
 
-                return tradVsp + tipo.trad + ' ' + nombreFuncionBloque + " ()" + tradBloque;
+                return tradVsp + traducirTipo(tipo) + ' ' + nombreFuncionBloque + " () " + tradBloque;
             
             case Token.VAR:
                 reglasAplicadas.append(" 6");
@@ -328,8 +305,10 @@ public class TraductorDR
             case Token.ID:
                 reglasAplicadas.append(" 10");
 
-                if(th == "")
-                    th = "main_";
+                if(th.equals(""))
+                    th = "main";
+                
+                th += '_';
                 
                 Vector<Token> vTokens = new Vector<>();
 
@@ -340,10 +319,10 @@ public class TraductorDR
 
                 String tradLid = Lid(th, vTokens);
                 emparejar(Token.DOSP);
-                TipoClass tipo = Tipo();
+                Token tipo = Tipo();
                 emparejar(Token.PYC);
 
-                int tipoSimbolo = tipo.tipoToSimbolo();
+                int tipoSimbolo = (tipo.tipo == Token.ENTERO) ? Simbolo.ENTERO : Simbolo.REAL;
 
                 // Añade variables al ámbito
                 for (Token token : vTokens) {
@@ -351,7 +330,7 @@ public class TraductorDR
                         errorSemantico(ERR_YA_EXISTE, token.fila, token.columna, token.lexema);
                 }
 
-                return tipo.trad + ' ' + th + id.lexema + tradLid + ";\n";
+                return traducirTipo(tipo) + ' ' + th + id.lexema + tradLid + ";\n";
                 
             default: 
                 terminosEsperados.add(Token.ID);
@@ -392,19 +371,19 @@ public class TraductorDR
         return null;
     }
 
-    private final TipoClass Tipo()
+    private final Token Tipo()
     {
         switch(token.tipo)
         {
             case Token.ENTERO:
                 reglasAplicadas.append(" 13");
 
-                return new TipoClass(emparejar(Token.ENTERO));
+                return emparejar(Token.ENTERO);
 
             case Token.REAL:
                 reglasAplicadas.append(" 14");
 
-                return new TipoClass(emparejar(Token.REAL));
+                return emparejar(Token.REAL);
                 
             default: 
             terminosEsperados.add(Token.ENTERO);
@@ -530,14 +509,14 @@ public class TraductorDR
                         //TODO: ERROR asignando real a entero
                         errorSemantico(ERR_ASIG_REAL, id.fila, id.columna, id.lexema);
                     else if(eType.tipo == tipoInt)
-                        return idSimbolo.nombreCompleto + " =i " + eType.trad + " ;\n";
+                        return idSimbolo.nombreCompleto + " =i " + eType.trad + ";\n";
                 }
                 else if(idSimbolo.tipo == Simbolo.REAL)
                 {
                     if(eType.tipo == tipoDouble)
-                        return idSimbolo.nombreCompleto + " =r " + eType.trad + " ;\n";
+                        return idSimbolo.nombreCompleto + " =r " + eType.trad + ";\n";
                     else if(eType.tipo == tipoInt)
-                        return idSimbolo.nombreCompleto + " =r itor(" + eType.trad + ") ;\n";
+                        return idSimbolo.nombreCompleto + " =r itor(" + eType.trad + ");\n";
                 }
                 
                 //TODO: ERROR es nombre función
@@ -599,7 +578,7 @@ public class TraductorDR
                 if(eType.tipo == tipoBool)
                     errorSemantico(ERR_NO_BOOL, escribir.fila, escribir.columna, escribir.lexema);
 
-                return "printf(\"" + eType.print() + "\"," + eType.trad +");\n";
+                return "printf(\"" + eType.print() + "\\n\"," + eType.trad +");\n";
             }
 
             default: 
@@ -663,7 +642,7 @@ public class TraductorDR
                 // Si no hay expresión booleana
                 if(eEp == null)
                     return eExpr;
-                
+                                
                 // Si la expresión booleana son dos enteros
                 if(eEp.tipo == tipoInt)
                     return new EType(tipoBool, eExpr.trad + eEp.trad);
@@ -702,25 +681,24 @@ public class TraductorDR
                 Token oprel = emparejar(Token.OPREL);
                 EType eExpr = Expr();
                 
+                if(oprel.lexema.equals("<>"))
+                    oprel.lexema = "!=";
+                else if(oprel.lexema.equals("="))
+                    oprel.lexema = "==";
+                
                 if(eExpr.tipo == tipoInt)
                 {
                     // Los dos enteros
                     if(tipoH == tipoInt)
                         return new EType(tipoInt, ' ' + oprel.lexema + "i " + eExpr.trad);
-                    // El anterior entero pero este real
+                    // El anterior real pero este Int
                     if(tipoH == tipoDouble)
-                        return new EType(tipoDouble, ' ' + oprel.lexema + "r " + eExpr.trad);
+                        return new EType(tipoDouble, ' ' + oprel.lexema + "r itor(" + eExpr.trad + ')');
                 }
 
                 if(eExpr.tipo == tipoDouble)
-                {
-                    // El anterior real pero este entero
-                    if(tipoH == tipoInt)
-                        return new EType(tipoDouble, ' ' + oprel.lexema + "r itor(" + eExpr.trad + ')');
-                    // Los dos reales
-                    if(tipoH == tipoDouble)
-                        return new EType(tipoDouble, ' ' + oprel.lexema + "r " + eExpr.trad);
-                }
+                    // Si este es double, operador double
+                    return new EType(tipoDouble, ' ' + oprel.lexema + "r " + eExpr.trad);
 
                 break;
 
@@ -767,13 +745,18 @@ public class TraductorDR
                 if(eExprp.tipo == tipoInt)
                     return new EType(tipoInt, eTerm.trad + eExprp.trad);
 
-                // Si hay algún Expr Double y este es double, operador Double
-                if(eTerm.tipo == tipoDouble)
-                    return new EType(tipoDouble, eTerm.trad + eExprp.trad);
+                // Si hay algún Expr Double 
+                if(eExprp.tipo == tipoDouble)
+                {
+                    // Si este es double, operador Double
+                    if(eTerm.tipo == tipoDouble)
+                        return new EType(tipoDouble, eTerm.trad + eExprp.trad);
+    
+                    // Si este es Int, operador Double y casteo
+                    if(eTerm.tipo == tipoInt)
+                        return new EType(tipoDouble, "itor(" + eTerm.trad + ')' + eExprp.trad);
+                }
 
-                // Si hay algún Expr Double y este es Int, operador Double y casteo
-                if(eTerm.tipo == tipoInt)
-                    return new EType(tipoDouble, "itor(" + eTerm.trad + ')' + eExprp.trad);
             
                 
                 break;
@@ -810,14 +793,17 @@ public class TraductorDR
                 if(eExprp.tipo == tipoInt)
                     return new EType(tipoInt, ' ' + opas.lexema + "i " + eTerm.trad + eExprp.trad);
 
-                // Si hay algún Expr Double y este es double, operador Double
-                if(eTerm.tipo == tipoDouble)
-                    return new EType(tipoDouble, ' ' + opas.lexema + "r " + eTerm.trad + eExprp.trad);
+                // Si hay algún Expr Double
+                if(eExprp.tipo == tipoDouble)
+                {
+                    // Si este es double, operador Double
+                    if(eTerm.tipo == tipoDouble)
+                        return new EType(tipoDouble, ' ' + opas.lexema + "r " + eTerm.trad + eExprp.trad);
 
-                // Si hay algún Expr Double y este es Int, operador Double y casteo
-                if(eTerm.tipo == tipoInt)
-                    return new EType(tipoDouble, ' ' + opas.lexema + "r itor(" + eTerm.trad + ')' + eExprp.trad);
-            
+                    // Si este es Int, operador Double y casteo
+                    if(eTerm.tipo == tipoInt)
+                        return new EType(tipoDouble, ' ' + opas.lexema + "r itor(" + eTerm.trad + ')' + eExprp.trad);
+                }            
 
             }
             
@@ -867,15 +853,18 @@ public class TraductorDR
                 if(eTermp.tipo == tipoInt)
                     return new EType(tipoInt, eFactor.trad + eTermp.trad);
 
-                // Si hay algún Term Double y este es double, operador Double
-                if(eFactor.tipo == tipoDouble)
-                    return new EType(tipoDouble, eFactor.trad + eTermp.trad);
-
-                // Si hay algún Term Double y este es Int, operador Double y casteo
-                if(eFactor.tipo == tipoInt)
-                    return new EType(tipoDouble, "itor(" + eFactor.trad + ')' + eTermp.trad);
+                // Si hay algún Term Double 
+                if(eTermp.tipo == tipoDouble)
+                {
+                    // Si este es double, operador Double
+                    if(eFactor.tipo == tipoDouble)
+                        return new EType(tipoDouble, eFactor.trad + eTermp.trad);
+    
+                    // Si este es Int, operador Double y casteo
+                    if(eFactor.tipo == tipoInt)
+                        return new EType(tipoDouble, "itor(" + eFactor.trad + ')' + eTermp.trad);
+                }
             
-
                 break;
 
             default: 
@@ -905,12 +894,12 @@ public class TraductorDR
                     tipoH = eFactor.tipo;
                 
                 // Se trata de operación Double y se traduce a /r
-                if(opmd.lexema == "/")
+                if(opmd.lexema.equals("/"))
                     tipoH = tipoDouble;
                 
                 EType eTermp = Termp(tipoH);
                 
-                if(opmd.lexema == "//")
+                if(opmd.lexema.equals("//"))
                 {
                     // Debe ser todo tipo int y se traduce a /i
                     if(tipoH != tipoInt || eTermp.tipo != tipoInt)
@@ -923,13 +912,17 @@ public class TraductorDR
                 if(eTermp.tipo == tipoInt)
                     return new EType(tipoInt, ' ' + opmd.lexema + "i " + eFactor.trad + eTermp.trad);
 
-                // Si hay algún Term Double y este es double, operador Double
-                if(eFactor.tipo == tipoDouble)
-                    return new EType(tipoDouble, ' ' + opmd.lexema + "r " + eFactor.trad + eTermp.trad);
-
-                // Si hay algún Term Double y este es Int, operador Double y casteo
-                if(eFactor.tipo == tipoInt)
-                    return new EType(tipoDouble, ' ' + opmd.lexema + "r itor(" + eFactor.trad + ')' + eTermp.trad);
+                // Si hay algún Term Double 
+                if(eTermp.tipo == tipoDouble)
+                {
+                    // Si este es double, operador Double
+                    if(eFactor.tipo == tipoDouble)
+                        return new EType(tipoDouble, ' ' + opmd.lexema + "r " + eFactor.trad + eTermp.trad);
+    
+                    // Si este es Int, operador Double y casteo
+                    if(eFactor.tipo == tipoInt)
+                        return new EType(tipoDouble, ' ' + opmd.lexema + "r itor(" + eFactor.trad + ')' + eTermp.trad);
+                }
             
             }
             

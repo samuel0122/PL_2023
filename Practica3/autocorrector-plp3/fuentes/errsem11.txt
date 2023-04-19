@@ -11,11 +11,11 @@ algoritmo colores;
       var j:real;
       funcion rito:real;
         var k:entero;
-        blq (* rito *)
-          k := 643;
-          j := k / 10;
-          j := k // 10.1
-        fblq;
+      blq (* rito *)
+        k := 643;
+        j := k / 10;
+        j := k // 10.1
+      fblq;
       funcion mala: entero;
         var j: entero;
 	    k: real;
