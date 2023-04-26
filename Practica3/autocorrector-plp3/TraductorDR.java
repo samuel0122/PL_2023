@@ -26,7 +26,7 @@ public class TraductorDR
     private Token token;
     private AnalizadorLexico lexico;
     private TreeSet<Integer> terminosEsperados;
-
+    private Vector<Token> vTokens;
 
     private final int   ERR_YA_EXISTE   = 1,
                         ERR_NO_VARIABLE = 2,
@@ -135,7 +135,7 @@ public class TraductorDR
                 emparejar(Token.PYC);
 
                 String tradVsp = Vsp("");
-                String tradBloque = Bloque("");
+                String tradBloque = Bloque();
                 
                 
                 return "// " + algoritmo.lexema + " " + id.lexema + '\n' + tradVsp + "int main() " + tradBloque;
@@ -221,7 +221,7 @@ public class TraductorDR
                 tsActual = new TablaSimbolos(tsActual);
 
                 String tradVsp = Vsp(nombreFuncionBloque);
-                String tradBloque = Bloque(nombreFuncionBloque);
+                String tradBloque = Bloque();
 
                 emparejar(Token.PYC);
                 
@@ -312,14 +312,14 @@ public class TraductorDR
                 
                 th += '_';
                 
-                Vector<Token> vTokens = new Vector<>();
+                vTokens = new Vector<>();
 
                 Token id = emparejar(Token.ID);
 
                 // Guardar variable para añadir al ámbito
                 vTokens.add(id);
 
-                String tradLid = Lid(th, vTokens);
+                String tradLid = Lid(th);
                 emparejar(Token.DOSP);
                 Token tipo = Tipo();
                 emparejar(Token.PYC);
@@ -343,7 +343,7 @@ public class TraductorDR
         return null;
     }
 
-    private final String Lid(String th, Vector<Token> vTokens)
+    private final String Lid(String th)
     {
         switch(token.tipo)
         {
@@ -356,7 +356,7 @@ public class TraductorDR
 
                 vTokens.add(id);
 
-                String tradLid = Lid(th, vTokens);
+                String tradLid = Lid(th);
                 
                 return ',' + th + id.lexema + tradLid;
             }
@@ -395,7 +395,7 @@ public class TraductorDR
         return null;
     }
     
-    private final String Bloque(String th)
+    private final String Bloque()
     {
         switch(token.tipo)
         {
@@ -403,7 +403,7 @@ public class TraductorDR
             {
 
                 emparejar(Token.BLQ);
-                String tradSInstr = SInstr(th);
+                String tradSInstr = SInstr();
                 emparejar(Token.FBLQ);
 
                 return "{\n" + tradSInstr + "}\n";
@@ -417,7 +417,7 @@ public class TraductorDR
         return null;
     }
 
-    private final String SInstr(String th)
+    private final String SInstr()
     {
         switch(token.tipo)
         {
@@ -428,8 +428,8 @@ public class TraductorDR
             case Token.ESCRIBIR:
             {
 
-                String tradInstr = Instr(th);
-                String tradSInstrp = SInstrp(th);
+                String tradInstr = Instr();
+                String tradSInstrp = SInstrp();
                 
                 return tradInstr + tradSInstrp;
             }
@@ -446,7 +446,7 @@ public class TraductorDR
         return null;
     }
 
-    private final String SInstrp(String th)
+    private final String SInstrp()
     {
         switch(token.tipo)
         {
@@ -454,8 +454,8 @@ public class TraductorDR
             {
 
                 emparejar(Token.PYC);
-                String tradInstr = Instr(th);
-                String tradSInstrp = SInstrp(th);
+                String tradInstr = Instr();
+                String tradSInstrp = SInstrp();
                 
                 return tradInstr + tradSInstrp;
             }
@@ -476,14 +476,14 @@ public class TraductorDR
         return null;
     }
 
-    private final String Instr(String th)
+    private final String Instr()
     {
         switch(token.tipo)
         {
             case Token.BLQ:
             {
 
-                String tradBloque = Bloque(th);
+                String tradBloque = Bloque();
                 
                 return tradBloque;
             }
@@ -542,8 +542,8 @@ public class TraductorDR
                     errorSemantico(ERR_SIMIENTRAS, si.fila, si.columna, si.lexema);
 
                 emparejar(Token.ENTONCES);
-                String tradInstr = Instr(th);
-                String tradInstrp = Instrp(th);
+                String tradInstr = Instr();
+                String tradInstrp = Instrp();
 
                 return "if (" + eType.trad + ")\n" + tradInstr + tradInstrp;
             }
@@ -559,7 +559,7 @@ public class TraductorDR
                     errorSemantico(ERR_SIMIENTRAS, mientras.fila, mientras.columna, mientras.lexema);
 
                 emparejar(Token.HACER);
-                String tradInstr = Instr(th);
+                String tradInstr = Instr();
                 
                 return "while ( " + eType.trad + " )\n" + tradInstr;
             }
@@ -591,7 +591,7 @@ public class TraductorDR
         return null;
     }
 
-    private final String Instrp(String th)
+    private final String Instrp()
     {
         switch(token.tipo)
         {
@@ -607,7 +607,7 @@ public class TraductorDR
             {
 
                 emparejar(Token.SINO);
-                String tradInstr = Instr(th);
+                String tradInstr = Instr();
                 emparejar(Token.FSI);
 
                 return "else\n" + tradInstr;
