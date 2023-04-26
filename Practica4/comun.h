@@ -6,10 +6,12 @@ typedef struct {
    char *lexema;
    int nlin,ncol;
    int tipo;
+   string th;
    string cod;
 } MITIPO;
 
 #define YYSTYPE MITIPO
+
 
 
 #define ERRLEXICO    1

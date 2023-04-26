@@ -12,7 +12,13 @@ using namespace std;
 // const int FUNCION=3;
 
 struct Simbolo {
-
+  Simbolo(string nombre, int tipo, string nomtrad)
+  {
+    this->nombre = nombre;
+    this->tipo = tipo;
+    this->nomtrad = nomtrad;
+  }
+  
   string nombre;
   int tipo;
   string nomtrad;

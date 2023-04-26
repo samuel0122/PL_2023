@@ -28,6 +28,9 @@ extern int ncol,nlin,findefichero;
 TablaSimbolos *tsActual = new TablaSimbolos(NULL);
 Simbolo *simbolo;
 
+vector<string> vVariablesId;
+int tipo;
+
 extern int yylex();
 extern char *yytext;
 extern FILE *yyin;
@@ -35,6 +38,7 @@ extern FILE *yyin;
 
 int yyerror(char *s);
 void errorSemantico(int nerr,int fila,int columna,char *lexema);
+void errorSemantico(int nerr);
 
 
 const int ERR_YA_EXISTE   = 1,
@@ -57,81 +61,119 @@ string operador, s1, s2;  // string auxiliares
 %%
 
 
-S     : algoritmo id pyc Vsp Bloque    { /* comprobar que después del programa no hay ningún token más */
-                                          int tk = yylex();
-                                          if (tk != 0) yyerror("");
-
-                                          s1 = "// " + string($1.lexema) + " " + $2.lexema + "\n";
-                                          s2 = $4.cod + "int main() " + $5.cod;
+S     : algoritmo id pyc { $$.th = "pero_"; } Vsp Bloque    { 
+                                          s1 = "// " + string($1.lexema) + " " + string($2.lexema) + "\n";
+                                          s2 = $5.cod + "int main() " + $6.cod;
 
                                           cout << s1 + s2;
+
+                                          /* comprobar que después del programa no hay ningún token más */
+                                          int tk = yylex();
+                                          if (tk != 0) yyerror("");
                                        }
       ;
 
 
-Vsp   : Vsp Unsp        {  s1 = $1.cod;
-                           s2 = $2.cod;
-                           $$.cod = s1 + s2;
+Vsp   : Vsp { $$.th = $0.th; } Unsp       {  s1 = $1.cod;
+                                             s2 = $3.cod;
+                                             $$.cod = s1 + s2;
+                                          }
+      | { $$.th = $0.th; } Unsp           {$$.th = $2.th; } /* $$ = $1 */
+      ;
+
+Unsp  : funcion id dosp Tipo pyc {  s1 = $0.th; s2 = string($2.lexema); 
+                                    $$.cod = s1.empty() ? s2 : s1 + '_' + s2; 
+                                    } Vsp Bloque pyc {  
+                                                         s1 = $7.cod;
+                                                         s2 = $4.cod + ' ' + $6.cod + " ()" + $8.cod;
+                                                         $$.cod = s1 + s2;
+                                                         cout << "UNSP FUNCION \n" << $$.cod << '\n';
+                                                         exit(0);
+                                                      }
+      | var {  $$.th = $0.th; } LV                    {  
+                                                         $$.cod = $3.cod;
+                                                         std::cout << "VAR:\n" << $$.cod << '\n';
+                                                      }
+      ;
+
+LV    :  LV { $$.th = $0.th; } V           { $$.cod = $1.cod + $3.cod; cout << $$.cod << '\n'; }
+      |  { $$.th = $0.th; } V              { $$.cod = $2.cod; }
+      ;
+
+V     :  {  vVariablesId.clear(); $$.th = $0.th; } Lid dosp Tipo pyc {  
+                                                                        for(std::string vars: vVariablesId)
+                                                                        {
+                                                                           simbolo = tsActual->buscar(vars);
+                                                                           if(simbolo == NULL)
+                                                                              errorSemantico(ERR_YA_EXISTE);
+                                                                           simbolo->tipo = $4.tipo;
+                                                                           simbolo = NULL;
+                                                                        }
+                                                                        $$.cod = $4.cod + " " + $2.cod + ";\n";
+                                                                     }
+      ;
+
+Lid   :   Lid coma  id  {  
+                           s1 = $0.th + string($3.lexema);
+                           if(!tsActual->nuevoSimbolo({$3.lexema, -1, s1}))
+                              errorSemantico(ERR_YA_EXISTE);
+                           
+                           vVariablesId.emplace_back($3.lexema);
+
+                           $$.cod = $1.cod + ", " + s1;
                         }
-      | Unsp            /* $$ = $1 */
+      | id              { 
+                           s1 = $0.th + string($1.lexema);
+                           if(!tsActual->nuevoSimbolo({$1.lexema, -1, s1}))
+                              errorSemantico(ERR_YA_EXISTE);
+                           
+                           vVariablesId.emplace_back($1.lexema);
+                           $$.cod = s1; 
+                           //cout << "### ID: " << string($1.lexema) << " " << $$.cod << "\n"; 
+                        }
       ;
 
-Unsp  : funcion id dosp Tipo pyc Vsp Bloque pyc {  
-                                                }
-      | var LV                                  {
-                                                }
-      ;
-
-LV    : LV V
-      | V
-      ;
-
-V     : Lid dosp Tipo pyc  {
-                           }
-      ;
-
-Lid   : Lid coma id  {  
-                     }
-      | id           /* $$ = $1 */
-      ;
-
-Tipo  : entero    /* $$ = $1 */
-      | real      /* $$ = $1 */
+Tipo  : entero    {  $$.tipo = ENTERO;
+                     $$.cod = "int";
+                  }
+      | real      {  $$.tipo = REAL;
+                     $$.cod = "double";
+                  }
       ;
 
 Bloque: blq SInstr fblq { $$.cod = "{\n" + $2.cod + "}\n";
                         }
       ;
 
-SInstr: SInstr pyc Instr   { $$.cod = $1.cod + $2.cod;
+SInstr: SInstr pyc Instr   { $$.cod = $1.cod + $3.cod;
                            }
       | Instr              /* $$ = $1 */
       ;
 
 Instr : Bloque          /* $$ = $1 */
-      | id asig E                   {  simbolo = tsActual.buscar($1.lexema);
+      | id asig E                   {  simbolo = tsActual->buscar($1.lexema);
                                        
                                        if (simbolo == NULL)
                                           errorSemantico(ERR_NO_DECL);
-                                       if (simbolo.tipo == FUNCION)
+                                       if (simbolo->tipo == FUNCION)
                                           errorSemantico(ERR_NO_VARIABLE);
                                        if ($3.tipo == BOOLEAN)
                                           errorSemantico(ERR_NO_BOOL);
                                        
+                                       s1 = simbolo->nomtrad;
+
                                        operador = "=";
                                        if ($1.tipo != $3.tipo)
                                        {
                                           if ($1.tipo == ENTERO)
                                              errorSemantico(ERR_ASIG_REAL);
                                           
-                                          s1 = $1.cod; 
                                           s2 = "itor(" + $3.cod + ")";
                                           operador +="r";
                                           $$.cod = s1 + " " + operador + " " + s2 + ";\n";
                                        }
                                        else
                                        {
-                                          s1 = $1.cod;
                                           s2 = $3.cod;
                                           operador += ($1.tipo == REAL)  ? "r" : "i";
                                           $$.cod = s1 + " " + operador + " " + s2 + ";\n";
@@ -214,7 +256,7 @@ Term  : Term opmd Factor   {  if (!strcmp($2.lexema,"*"))
                               if ($1.tipo != $3.tipo)
                               {
                                  if (!strcmp($2.lexema,"//"))
-                                    errorSemantico(ERR_DIVENTERA) // ERROR SINTACTICO
+                                    errorSemantico(ERR_DIVENTERA); // ERROR SINTACTICO
 
                                  s1 = ($1.tipo == ENTERO) ? ("itor(" + $1.cod + ")") : $1.cod; 
                                  s2 = ($3.tipo == ENTERO) ? ("itor(" + $3.cod + ")") : $3.cod; 
@@ -225,7 +267,7 @@ Term  : Term opmd Factor   {  if (!strcmp($2.lexema,"*"))
                               else
                               {
                                  if (!strcmp($2.lexema,"//") && $1.tipo != ENTERO)
-                                    errorSemantico(ERR_DIVENTERA) // ERROR SINTACTICO
+                                    errorSemantico(ERR_DIVENTERA); // ERROR SINTACTICO
                                  
                                  s1 = $1.cod;
                                  s2 = $3.cod;
@@ -237,15 +279,19 @@ Term  : Term opmd Factor   {  if (!strcmp($2.lexema,"*"))
       | Factor             /* $$ = $1 */
       ;
 
-Factor: id                 {  simbolo = tsActual.buscar($1.lexema);
-                                       
+Factor: id                 {  simbolo = tsActual->buscar($1.lexema);
+                              
+                              cout << "Buscando: " << string($1.lexema) << " -> " << simbolo << '\n';
+                              
                               if (simbolo == NULL)
                                  errorSemantico(ERR_NO_DECL);
-                              if (simbolo.tipo == FUNCION)
+                              if (simbolo->tipo == FUNCION)
                                  errorSemantico(ERR_NO_VARIABLE);
                               
-                              $$.tipo = simbolo.tipo; // todas las variables son enteras
-                              $$.cod  = simbolo.nomtrad;
+                              cout << simbolo->tipo << ' ' << simbolo->nomtrad << ' ' << simbolo->nombre << '\n';
+                              
+                              $$.tipo = simbolo->tipo; // todas las variables son enteras
+                              $$.cod  = simbolo->nomtrad;
                            }
       | nentero            {  $$.tipo = ENTERO;
                               $$.cod  = $1.lexema;
@@ -253,7 +299,7 @@ Factor: id                 {  simbolo = tsActual.buscar($1.lexema);
       | nreal              {  $$.tipo = REAL;
                               $$.cod  = $1.lexema;
                            }
-      | pari Exp pard      {  $$.tipo = $2.tipo;
+      | pari Expr pard     {  $$.tipo = $2.tipo;
                               $$.cod  = $2.cod;
                            }
       ;
@@ -263,6 +309,37 @@ Factor: id                 {  simbolo = tsActual.buscar($1.lexema);
 void errorSemantico(int nerr,int fila,int columna,char *lexema) 
 {
         fprintf(stderr,"Error semantico (%d,%d): ",fila,columna);
+        switch (nerr) {
+	        	case ERR_YA_EXISTE:
+	        		fprintf(stderr,"'%s' ya existe en este ambito\n",lexema);
+	        		break;
+			case ERR_NO_VARIABLE:
+			        fprintf(stderr,"'%s' no es una variable\n",lexema);
+				break;
+			case ERR_NO_DECL:
+				fprintf(stderr,"'%s' no ha sido declarado\n",lexema);
+				break;
+			case ERR_NO_BOOL:
+			    	fprintf(stderr,"'%s' no admite expresiones booleanas\n",lexema);
+				break;
+			case ERR_ASIG_REAL:
+			    	fprintf(stderr,"'%s' debe ser de tipo real\n",lexema);
+				break;
+			case ERR_SIMIENTRAS:
+			    	fprintf(stderr,"en la instruccion '%s' la expresion debe ser relacional\n",lexema);
+				break;
+			case ERR_DIVENTERA:
+			    	fprintf(stderr,"los dos operandos de '%s' deben ser enteros\n",lexema);
+				break;
+        }
+	exit(-1);
+}
+
+
+void errorSemantico(int nerr) 
+{
+         char * lexema = "LEXEMA";
+        fprintf(stderr,"Error semantico ( , ): ");
         switch (nerr) {
 	        	case ERR_YA_EXISTE:
 	        		fprintf(stderr,"'%s' ya existe en este ambito\n",lexema);
@@ -314,8 +391,11 @@ int yyerror(char *s)
     }
     else
     {  
+       cout << string(s) << '\n';
        msgError(ERRSINT,nlin,ncol-strlen(yytext),yytext);
     }
+    exit(-1);
+    return -1;
 }
 
 int main(int argc,char *argv[])

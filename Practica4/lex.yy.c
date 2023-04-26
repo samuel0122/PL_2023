@@ -750,11 +750,10 @@ YY_DECL
 #line 31 "plp4.l"
 
 
-#line 34 "plp4.l"
-/* codigo local */
 
 
-#line 758 "lex.yy.c"
+
+#line 757 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -813,231 +812,231 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 37 "plp4.l"
+#line 36 "plp4.l"
 {ncol++;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 38 "plp4.l"
+#line 37 "plp4.l"
 {ncol++;}
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 39 "plp4.l"
+#line 38 "plp4.l"
 {nlin++;ncol=1;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 41 "plp4.l"
+#line 40 "plp4.l"
 {ncol += strlen(yytext);BEGIN(COMENTARIO);}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 42 "plp4.l"
+#line 41 "plp4.l"
 {ncol += strlen(yytext);}
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 43 "plp4.l"
+#line 42 "plp4.l"
 {nlin++;ncol=1;}
 	YY_BREAK
 case YY_STATE_EOF(COMENTARIO):
-#line 44 "plp4.l"
+#line 43 "plp4.l"
 {msgError(ERRLEXEOF,-1,-1,"");}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 45 "plp4.l"
+#line 44 "plp4.l"
 {ncol+=strlen(yytext); BEGIN(INITIAL);}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 46 "plp4.l"
+#line 45 "plp4.l"
 {ncol += strlen(yytext);}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 48 "plp4.l"
+#line 47 "plp4.l"
 {return ret(var);}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 49 "plp4.l"
+#line 48 "plp4.l"
 {return ret(real);}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 50 "plp4.l"
+#line 49 "plp4.l"
 {return ret(entero);}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 51 "plp4.l"
+#line 50 "plp4.l"
 {return ret(algoritmo);}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 52 "plp4.l"
+#line 51 "plp4.l"
 {return ret(blq);}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 53 "plp4.l"
+#line 52 "plp4.l"
 {return ret(fblq);}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 54 "plp4.l"
+#line 53 "plp4.l"
 {return ret(funcion);}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 55 "plp4.l"
+#line 54 "plp4.l"
 {return ret(si);}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 56 "plp4.l"
+#line 55 "plp4.l"
 {return ret(entonces);}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 57 "plp4.l"
+#line 56 "plp4.l"
 {return ret(sino);}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 58 "plp4.l"
+#line 57 "plp4.l"
 {return ret(fsi);}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 59 "plp4.l"
+#line 58 "plp4.l"
 {return ret(mientras);}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 60 "plp4.l"
+#line 59 "plp4.l"
 {return ret(hacer);}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 61 "plp4.l"
+#line 60 "plp4.l"
 {return ret(escribir);}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 63 "plp4.l"
+#line 62 "plp4.l"
 {return ret(id);}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 64 "plp4.l"
+#line 63 "plp4.l"
 {return ret(nentero);}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 65 "plp4.l"
+#line 64 "plp4.l"
 {return ret(nreal);}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 67 "plp4.l"
+#line 66 "plp4.l"
 {return ret(pari);}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 68 "plp4.l"
+#line 67 "plp4.l"
 {return ret(pard);}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 69 "plp4.l"
+#line 68 "plp4.l"
 {return ret(opmd);}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 70 "plp4.l"
+#line 69 "plp4.l"
 {return ret(opmd);}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 71 "plp4.l"
+#line 70 "plp4.l"
 {return ret(opmd);}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 72 "plp4.l"
+#line 71 "plp4.l"
 {return ret(opas);}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 73 "plp4.l"
+#line 72 "plp4.l"
 {return ret(opas);}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 74 "plp4.l"
+#line 73 "plp4.l"
 {return ret(oprel);}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 75 "plp4.l"
+#line 74 "plp4.l"
 {return ret(oprel);}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 76 "plp4.l"
+#line 75 "plp4.l"
 {return ret(oprel);}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 77 "plp4.l"
+#line 76 "plp4.l"
 {return ret(oprel);}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 78 "plp4.l"
+#line 77 "plp4.l"
 {return ret(oprel);}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 79 "plp4.l"
+#line 78 "plp4.l"
 {return ret(oprel);}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 80 "plp4.l"
+#line 79 "plp4.l"
 {return ret(pyc);}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 81 "plp4.l"
+#line 80 "plp4.l"
 {return ret(dosp);}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 82 "plp4.l"
+#line 81 "plp4.l"
 {return ret(coma);}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 83 "plp4.l"
+#line 82 "plp4.l"
 {return ret(asig);}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 84 "plp4.l"
+#line 83 "plp4.l"
 {msgError(ERRLEXICO,nlin,ncol,yytext);}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 86 "plp4.l"
+#line 85 "plp4.l"
 ECHO;
 	YY_BREAK
-#line 1041 "lex.yy.c"
+#line 1040 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2042,7 +2041,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 86 "plp4.l"
+#line 85 "plp4.l"
 
 
 int yywrap(void) {findefichero=1; return 1;} /* para no tener que linkar con la
@@ -2051,6 +2050,7 @@ int yywrap(void) {findefichero=1; return 1;} /* para no tener que linkar con la
 
 int ret(int token)
 {
+   std::cout << std::string(yytext) << '\n';
    yylval.lexema=strdup(yytext);
    yylval.nlin=nlin;
    yylval.ncol=ncol;
