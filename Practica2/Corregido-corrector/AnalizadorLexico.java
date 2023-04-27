@@ -24,8 +24,7 @@ public class AnalizadorLexico
         endingComentary = 3,
         endComentary    = 4,
         errorEOF        = -5,
-        errorClass      = -6,
-        errorClassFirst = -7;
+        errorClass      = -6;
 
 
     static{
@@ -35,10 +34,8 @@ public class AnalizadorLexico
 		palabrasReservadas.put("algoritmo", Token.ALGORITMO);
 		palabrasReservadas.put("blq", Token.BLQ);
 		palabrasReservadas.put("fblq", Token.FBLQ);
-		palabrasReservadas.put("funcion", Token.FUNCION);
 		palabrasReservadas.put("si", Token.SI);
 		palabrasReservadas.put("entonces", Token.ENTONCES);
-		palabrasReservadas.put("sino", Token.SINO);
 		palabrasReservadas.put("fsi", Token.FSI);
 		palabrasReservadas.put("mientras", Token.MIENTRAS);
 		palabrasReservadas.put("hacer", Token.HACER);
@@ -133,14 +130,8 @@ public class AnalizadorLexico
         switch(estado){
             case 5:  return Token.PARI;
             case 6:  return Token.PARD;
-            case 8:
-            case 9:  return Token.OPMD;
             case 10: return Token.OPAS;
-            case 12:
-            case 14:
-            case 15: return Token.OPREL;
             case 16: return Token.PYC;
-            case 17: return Token.COMA;
             case 19: return Token.DOSP;
             case 20: return Token.ASIG;
             case 22:
@@ -202,7 +193,7 @@ public class AnalizadorLexico
 
                 case '*':
                     switch(estado){
-                        case 0: return 7;
+                        case 0: return errorClass;
                         case 1: return commentaryLoop;
                         case commentaryLoop:    return endingComentary;
                         case endingComentary:   return endingComentary;
@@ -211,8 +202,9 @@ public class AnalizadorLexico
 
                 case '/':
                     switch(estado){
-                        case 0: return 7;
-                        case 7: return 8;
+                        case 0: return errorClass;
+                        case 7: return errorClass;
+                        //case 7: return 8;
                     }
                 break;
 
@@ -230,20 +222,22 @@ public class AnalizadorLexico
 
                 case '<':
                     switch(estado){
-                        case 0: return 11;
+                        case 0: return errorClass;
                     }
                 break;
 
                 case '>':
                     switch(estado){
-                        case 0:  return 13;
-                        case 11: return 12;
+                        case 0:  return errorClass;
+                        case 11: return errorClass;
+                        //case 11: return 12;
                     }
                 break;
 
                 case '=':
                     switch(estado){
-                        case 0:  return 15;
+                        //case 0:  return 15;
+                        case 0: return errorClass;
                         case 11: return 12;
                         case 13: return 12;
                         case 18: return 20;
@@ -258,7 +252,7 @@ public class AnalizadorLexico
 
                 case ',':
                     switch(estado){
-                        case 0: return 17;
+                        case 0: return errorClass;
                     }
                 break;
 
@@ -270,7 +264,7 @@ public class AnalizadorLexico
 
                 case '.':
                     switch(estado){
-                        case 0:  return errorClassFirst;
+                        case 0:  return errorClass;
                         case 21: return 23;
                     }
                 break;
@@ -346,17 +340,11 @@ public class AnalizadorLexico
         if(nuevoEstado == errorClass)
         {
             // System.err("Error lexico (" + nuevoToken.fila + ',' + nuevoToken.columna + "): caracter '" + c + "' incorrecto");
-            System.err.printf("Error lexico (%d,%d): caracter '%s' incorrecto%n", currentRow, (currentColumn-1), c);
+            System.err.printf("Error lexico (%d,%d): caracter '%s' incorrecto%n", currentRow, currentColumn, c);
             //System.err.println("Error lexico (" + currentRow + ',' + (currentColumn-1) + "): caracter '" + c + "' incorrecto");
             System.exit(-1);
         }
 
-        if(nuevoEstado == errorClassFirst)
-        {
-            System.err.printf("Error lexico (%d,%d): caracter '%s' incorrecto%n", currentRow, (currentColumn), c);
-            //System.err.println("Error lexico (" + currentRow + ',' + (currentColumn) + "): caracter '" + c + "' incorrecto");
-            System.exit(-1);
-        }
     }
 
 
@@ -381,8 +369,10 @@ public class AnalizadorLexico
             {
                 nuevoEstado = delta(estado, c);
 
+                if(previousC == ' ') previousC = c;
+    
                 // ERROR
-                checkError(nuevoEstado, previousC);
+                checkError(nuevoEstado, c);
                 
                 ++currentColumn;
 
@@ -396,7 +386,7 @@ public class AnalizadorLexico
                 }
                 else if(nuevoEstado == -1)
                 {
-                    System.out.println("ERROR INESPERADO");
+                    //System.out.println("ERROR INESPERADO");
                     System.exit(-1);
                 }
 

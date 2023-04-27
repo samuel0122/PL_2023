@@ -24,3 +24,4 @@ plp4.tab.c plp4.tab.h: plp4.y lex.yy.c comun.h TablaSimbolos.h
 clean:
 	rm -f $(OBJS)
 	rm -f plp4
+	rm -f lex.yy.c plp4.tab.c plp4.tab.h
