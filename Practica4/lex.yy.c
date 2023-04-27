@@ -2050,7 +2050,6 @@ int yywrap(void) {findefichero=1; return 1;} /* para no tener que linkar con la
 
 int ret(int token)
 {
-   std::cout << std::string(yytext) << '\n';
    yylval.lexema=strdup(yytext);
    yylval.nlin=nlin;
    yylval.ncol=ncol;
