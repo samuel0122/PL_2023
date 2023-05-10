@@ -1,0 +1,12 @@
+algoritmo : test
+var
+   entero : i,j,k;
+   real : r;
+   tabla 2 de tabla 3 de tabla 4 de real : a;
+   real : f;
+fvar
+   i := 0;
+   j := 0;
+   k := 0;
+   r := 0
+falgoritmo

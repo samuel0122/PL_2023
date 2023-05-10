@@ -1,0 +1,58 @@
+algoritmo nuErrSem5;
+
+ var a,b:entero;
+ funcion uno:real;
+  funcion piramide:entero;
+   var n,i,j:entero;
+  blq
+   n := 4;
+   i := 0;
+   mientras i < n hacer
+    blq
+      j := 0;
+      mientras j < i hacer
+       blq
+        escribir(j);
+        j := j+1
+       fblq;
+      i := i+1
+    fblq;
+
+   i := n-1;
+   mientras i > 0 hacer
+    blq
+      j := 0;
+      mientras j < i hacer
+       blq
+        escribir(j);
+        j := j+1
+       fblq;
+      i := i-1
+    fblq
+  fblq;
+ blq (* uno *)
+   b := 8
+ fblq;
+ funcion uuno:entero;
+  funcion piramide:real;
+   var h:entero;
+  blq
+    h := a+2
+  fblq;
+  funcion uuno:real;  (* oscurede uuno:entero, pero es correcto *)
+   var a:entero;
+  blq
+    a := 7
+  fblq;
+  funcion piramide:entero;  (* error semantico, 'piramide' ya existe en este ambito *)
+   var j:real;
+  blq
+   j := 2-1-1-1-1-1.001
+  fblq;
+ blq
+  escribir(7.89)
+ fblq;
+blq (* programa principal *)
+  b := 3;
+  a := (b<3)*5  (* error sintáctico en < *)
+fblq

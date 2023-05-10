@@ -1,0 +1,43 @@
+algoritmo nuCorrecto3;
+ var i,j:entero;
+     a,b:real;
+ funcion f:real;
+  var k:entero;
+ blq
+   b := 0;
+   a := i/j;
+   si a >= 3.4 entonces
+     si a > 4.5 entonces
+       si a = 5.6 entonces
+         si a <> 6.7 entonces
+           si a <= 7.8 entonces
+             si a < 8.9 entonces
+               b := 33.33 / 11
+             fsi
+           fsi
+         fsi
+       fsi
+     fsi
+   fsi;
+   blq
+     escribir(b)
+   fblq;
+   i := 100;
+   mientras i > 0 hacer
+    blq
+      escribir(i);
+      i := i // 2
+    fblq
+ fblq;
+
+blq
+  i := 56;
+  j := 10;
+  b := (1+2*3/3)-(3*4 // 5 - 7 + 8.1);
+  si i<j entonces
+    a := 77
+  sino
+    a := 88
+  fsi;
+  escribir(b)
+fblq

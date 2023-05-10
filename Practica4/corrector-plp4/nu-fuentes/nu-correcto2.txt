@@ -1,0 +1,62 @@
+algoritmo nuCorrecto2;
+
+ funcion uno:real;
+  var a:entero;
+  funcion dos:real;
+   var a:entero;
+   funcion tres:real;
+    var a:entero;
+   blq
+     a := 7*5+a
+   fblq;
+   funcion ttres:real;
+    var a:real;
+    funcion cuatro:entero;
+     var a:entero;
+    blq
+      a := 2 // (3-5*4)
+    fblq;
+   blq
+     a := 7
+   fblq;
+   var b,c:real;
+  blq
+    b := c+3;
+    c := 2/3
+  fblq;
+  var d,e,f:real;
+ blq
+  a := 7777 // 1111
+ fblq;
+
+ funcion uuno:entero;
+  var a:entero;
+  funcion dos:entero;
+   var b:entero;
+   funcion tres:entero;
+    var c:entero;
+    funcion cuatro:entero;
+     var d:entero;
+    blq
+      d := (2*a)+b // (c-7)
+    fblq;
+   blq
+     c := 8
+   fblq;
+  blq
+    si a < 3 entonces
+      b := 5
+    sino
+     blq
+       b := 6;
+       b := a+b
+     fblq
+    fsi
+  fblq;
+ blq
+   a := 3
+ fblq;
+
+blq (* programa principal *)
+  escribir (27-20-7)
+fblq

@@ -1,0 +1,76 @@
+algoritmo nuCorrecto4;
+
+ var glo1,gloBal2:entero;
+ 
+ funcion uno:entero;
+  var a:entero;
+  funcion dos:real;
+   funcion tres:real;
+    funcion cuatro:real;
+     var a,b:real;
+     funcion cinco:real;
+      funcion seis:real;
+       funcion siete:real;
+        funcion ocho:real;
+         funcion nueve:real;
+          funcion diez:real;
+           funcion once:real;
+            funcion doce:real;
+             var i12:entero; 
+            blq
+              b := 12/4
+            fblq;
+           blq
+             escribir(11)
+           fblq;
+          blq
+            escribir(2*5)
+          fblq;
+         blq
+           a := 3*3
+         fblq;
+        blq
+          escribir(2+2+2+2)
+        fblq;
+       blq
+         glo1 := 15 // 2
+       fblq;
+      blq
+        gloBal2 := 41 // 6
+      fblq;
+     blq
+       escribir(15-7-3)
+     fblq;
+    blq
+      glo1 := glo1 - 3
+    fblq;
+   blq
+     glo1 := gloBal2 // 2
+   fblq;
+  blq
+    escribir(22 // 11)
+  fblq;
+ blq
+   blq
+     blq
+       a := 12 // 11
+     fblq
+   fblq
+ fblq;
+var i,suma,n:entero;
+blq (* programa principal *)
+ 
+ n := 6;
+ i := 0;
+ suma := 0;
+ mientras i<n hacer
+   blq
+     suma := suma + i;
+     i := i + 1
+   fblq; 
+ si (n * (n-1)) // 2 <> suma entonces
+   escribir(0)
+ sino
+   escribir(1)
+ fsi
+fblq

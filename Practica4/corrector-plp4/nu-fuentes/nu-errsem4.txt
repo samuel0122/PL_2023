@@ -1,0 +1,10 @@
+algoritmo colores;
+  funcion rojo:entero;
+   var a,b,c:entero;
+  blq 
+    a := 7;
+    b := a+3.5 //  (* debe dar error en el '//' *)
+         c
+                    (* en la asignación hay otro error *)
+  fblq;
+
