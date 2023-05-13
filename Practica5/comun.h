@@ -9,7 +9,8 @@ typedef struct {
    int tam;
    int tipoH;
    int tamH;
-   string th;
+   int dbase;
+   int dir;
    string cod;
 } MITIPO;
 
@@ -45,4 +46,5 @@ typedef struct {
 #define ERR_MAXTMP           17
 
 void msgError(int nerror,int nlin,int ncol,const char *s);
+void errorSemantico(int nerror,int nlin,int ncol,const char *s);
 

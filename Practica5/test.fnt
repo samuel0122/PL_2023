@@ -1,9 +1,12 @@
 algoritmo : test
 var
-   entero : i,j,k;
-   real : r;
-   tabla 2 de tabla 3 de tabla 4 de real : a;
-   real : f;
+    tabla 10 de tabla 10 de tabla 15 de entero: y;
+    tabla 15 de tabla 10 de entero : vector;
+    tabla 20 de entero : v;
+    entero : i,j,k;
+    real : r;
+    tabla 2 de tabla 3 de tabla 4 de real : a;
+    real : f;
 fvar
    i := 0;
    j := 0;

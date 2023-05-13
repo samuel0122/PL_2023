@@ -38,6 +38,7 @@ Simbolo* TablaSimbolos::searchSymb(string nombre)
 
 void TablaSimbolos::imprimir()
 {
+  cout << "--- Tabla Simbolos ---\n";
   cout << "nombre" << '\t' << "tipo" << '\t' << "tam" << '\t' << "dir" << endl;
   for (auto simb: simbolos)
     cout << simb.nombre << '\t' << simb.tipo << '\t' << simb.tam << '\t' << simb.dir << endl;

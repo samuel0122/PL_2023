@@ -8,8 +8,6 @@ using namespace std;
 
 #include "TablaSimbolos.h"
 
-const unsigned  TIPOBASICO  = 0,
-                ARRAY       = 1;
 
 /*
   el constructor mete en el vector los tipos básicos, ENTERO y REAL
@@ -36,6 +34,9 @@ struct unTipo {
 class TablaTipos {
 
   public:
+    
+    static const unsigned   TIPOBASICO  = 0,
+                            ARRAY       = 1;
   
      vector<unTipo> tipos;
      
