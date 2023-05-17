@@ -56,12 +56,19 @@ bool esArray(uint tipo) { return tt->tipos[tipo].clase == TablaTipos::ARRAY; }
 uint tipoBase(uint tipo)  { return tt->tipos[tipo].tipoBase; }
 uint tamanyoTipo(uint tipo)  { return tt->tipos[tipo].tamanyo; }
 
+int   ASCII_C = 'c',
+      ASCII_F = 'f';
+
 int tmp, tmpcnv;
 int ctemp {INIT_DIR_TEMP};
 int nuevaTemp();
 
 int cvar {INIT_DIR_VAR};
 int nuevaVar(string nombreVar, int tamVar);
+
+int etiq1, etiq2;
+int cetiq {0};
+int nuevaEtiqueta();
 
 uint tam, dir, tipo;
 %}
@@ -79,15 +86,15 @@ S     : algoritmo dospto id SDec falgoritmo  {
       ;
 
 
-SDec  :  Dec SInstr  { $$.cod = $1.cod + $2.cod; }
+SDec  :  Dec SInstr  { $$.cod = $2.cod; }
       |  SInstr      { $$.cod = $1.cod; }
       ;
 
-Dec   :  var MDVar fvar {}
+Dec   :  var MDVar fvar {} // No hay traducción de las variables que se inicializan
       ;
 
-MDVar :  MDVar DVar  {}
-      |  DVar        {}
+MDVar :  MDVar DVar  {} // No hay traducción de las variables que se inicializan
+      |  DVar        {} // No hay traducción de las variables que se inicializan
       ;
 
 DVar  :  Tipo dospto { $$.tipoH = $1.tipo; $$.tamH = $1.tam; } LId pyc  {}
@@ -127,14 +134,102 @@ SInstr:  SInstr { $$.nlin = ctemp; } pyc Instr  { ctemp = $2.nlin; }
       |  { $$.nlin = ctemp; } Instr             { ctemp = $1.nlin; }
       ;
 
-Instr :  escribe Expr                     {}
-      |  lee Ref                          {}
-      |  si Expr entero Instr             {}
-      |  si Expr entero Instr sino Instr  {}
-      |  mientras Expr hacer Expr         {}
-      |  repetir Instr hasta Expr         {}
-      |  Ref opasig Expr                  {  
-                                             // Puedo asignar real a una variable entera?
+Instr :  escribe Expr                     {  if($2.tipo == LOGICO)
+                                             {
+                                                tmp = nuevaTemp();
+                                                etiq1 = nuevaEtiqueta();
+                                                etiq2 = nuevaEtiqueta();
+                                                s1 = "mov A " + std::to_string($2.dir) + '\n' +
+                                                      "jz L" + std::to_string(etiq1) +  '\n' +     // Si Z (false) salta
+                                                      "wrc #" + std::to_string(ASCII_C) + '\n' +   // CASO TRUE
+                                                      "jp L" + std::to_string(etiq2) + '\n' +   // Salta al final
+                                                      'L' + std::to_string(etiq1) + ":\n" +
+                                                      "wrc #" + std::to_string(ASCII_F) + '\n' +   // CASO FALSE
+                                                      'L' + std::to_string(etiq2) + ": ";
+                                             }
+                                             else
+                                                s1 = (($2.tipo == ENTERO) ? "wri " : "wrr ") + std::to_string($2.dir) + '\n';
+                                             
+                                             $$.cod = $2.cod + s1 + "wrl\n";
+                                          }
+      |  lee Ref                          {  if($2.tipo == LOGICO)
+                                             {
+                                                tmp = nuevaTemp();
+                                                etiq1 = nuevaEtiqueta();
+                                                etiq2 = nuevaEtiqueta();
+                                                s1 = "rdc A\n" +  // Lee ASCII
+                                                      "eqli #" + std::to_string(ASCII_C) + '\n' +  // Mira si lo leído es C 
+                                                      "mov A " + std::to_string($2.dir) + '\n';    // Guarda en variable
+                                             }
+                                             else
+                                                s1 = (($2.tipo == ENTERO) ? "rdi " : "rdr ") + std::to_string($2.dir) + '\n';
+                                             
+                                             $$.cod = $2.cod + s1;
+                                             
+                                          }
+      |  si Expr  { if($2.tipo != LOGICO) errorSemantico(ERR_EXP_LOG, $1.nlin, $1.ncol, $1.lexema); }
+                  entonces Instr             {  etiq1 = nuevaEtiqueta();
+                                                $$.cod = $2.cod + 
+                                                         "mov " + std::to_string($2.dir) + " A\n" + 
+                                                         "jz L" + std::to_string(etiq1) + '\n' +
+                                                         $5.cod +
+                                                         'L' + std::to_string(etiq1) + ": ";
+                                             }
+      |  si Expr { if($2.tipo != LOGICO) errorSemantico(ERR_EXP_LOG, $1.nlin, $1.ncol, $1.lexema); }
+                  entonces Instr sino Instr  {  etiq1 = nuevaEtiqueta();
+                                                etiq2 = nuevaEtiqueta();
+                                                $$.cod = $2.cod + 
+                                                         "mov " + std::to_string($2.dir) + " A\n" + 
+                                                         "jz L" + std::to_string(etiq1) + '\n' +
+                                                         $5.cod +
+                                                         "jmp L" + std::to_string(etiq2) + '\n' +
+                                                         'L' + std::to_string(etiq1) + ":\n" +
+                                                         $7.cod +
+                                                         'L' + std::to_string(etiq2) + ": ";
+                                             }
+      |  mientras Expr  { if($2.tipo != LOGICO) errorSemantico(ERR_EXP_LOG, $1.nlin, $1.ncol, $1.lexema); }
+                         hacer Expr       {  etiq1 = nuevaEtiqueta();
+                                             etiq2 = nuevaEtiqueta();
+                                             $$.cod = 'L' + std::to_string(etiq1) + ":\n" +
+                                                      $2.cod +
+                                                      "mov " + std::to_string($2.dir) + " A\n" + 
+                                                      "jz L" + std::to_string(etiq2) + '\n' +
+                                                      $5.cod +
+                                                      "jmp L" + std::to_string(etiq1) + '\n' +
+                                                      'L' + std::to_string(etiq2) + ": ";  
+                                          }
+      |  repetir Instr hasta Expr         {  if($4.tipo != LOGICO) errorSemantico(ERR_EXP_LOG, $3.nlin, $3.ncol, $3.lexema);
+                                             etiq1 = nuevaEtiqueta();
+                                             $$.cod = 'L' + std::to_string(etiq1) + ":\n" +
+                                                      $4.cod + // Ejecutar Instr
+                                                      $2.cod + // Ejecutar Expr
+                                                      "mov " + std::to_string($2.dir) + " A\n" + // Carga Instr
+                                                      "jz L" + std::to_string(etiq1) + '\n'; // Si instr false, repeat
+                                          }
+      |  Ref opasig Expr                  {  // Puedo asignar real a una variable entera? NO
+                                             if($1.tipo != $3.tipo)
+                                             {
+                                                if($3.tipo == LOGICO)   // No se puede asignar valor lógico a variables enteras o reales
+                                                {
+                                                   if($1.tipo == ENTERO) errorSemantico(ERR_EXDER_ENT, $2.nlin, $2.ncol, $2.lexema);
+                                                   if($1.tipo == REAL) errorSemantico(ERR_EXDER_REAL, $2.nlin, $2.ncol, $2.lexema);
+                                                }
+                                                // No se puede asignar valores enteros o reales a variable lógica
+                                                if($1.tipo == LOGICO) errorSemantico(ERR_EXDER_LOG, $2.nlin, $2.ncol, $2.lexema);
+
+                                                // No se puede asignar valor real a variable entera
+                                                if($1.tipo == ENTERO) errorSemantico(ERR_EXDER_ENT, $2.nlin, $2.ncol, $2.lexema);
+                                                
+                                                // Variable real -> Expr entero -> ITOR
+                                                $$.cod = $1.cod + $3.cod +
+                                                         "mov " + std::to_string($3.dir) + " A\n" +
+                                                         "itor\n" +
+                                                         "mov A " + std::to_string($1.dir) + '\n';
+                                             }
+                                             else
+                                             {
+                                                $$.cod = "mov " + std::to_string($3.dir) + ' ' + std::to_string($1.dir) + '\n';
+                                             }
                                           }
       |  blq { tsActual = new TablaSimbolos(tsActual); } SDec fblq    {
                                                                                     tsActual = tsActual->getAmbitoAnterior(); 
@@ -379,6 +474,14 @@ int nuevaVar(string nombreVar, int tamVar)
    cvar += tamVar;
    
    return tempReservado;
+}
+
+
+int nuevaEtiqueta();
+{
+   cetiq++;
+   
+   return cetiq;
 }
 
 void errorSemantico(int nerror,int nlin,int ncol,const char *s)
