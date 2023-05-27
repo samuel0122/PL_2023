@@ -1,0 +1,33 @@
+algoritmo: programa
+var
+  entero: x, y, z;
+  real: a, b;
+  logico: condicion;
+  tabla 5 de tabla 3 de entero: tablaenteros;
+  tabla 3 de real: tablareales;
+fvar
+
+// 9 8 7 -> 67.500 (1 vez)
+// 5 4 3 -> 17.500 (5 veces)
+  lee x;
+  lee y;
+  lee z;
+  
+  a := x * (y + z);
+  b := a / 2.0;
+
+  condicion := x > z;
+  
+  si condicion entonces
+    repetir
+      blq
+        escribe(b);
+        x := x + 1
+      fblq
+    hasta x >= 10
+  sino
+    blq
+      escribe(0);
+      escribe(-1)
+    fblq
+falgoritmo

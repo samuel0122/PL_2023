@@ -1,0 +1,73 @@
+algoritmo: programa
+var
+  entero: x, y, z;
+  real: a, b;
+  logico: condicion;
+  tabla 5 de entero: tablaenteros;
+  tabla 3 de real: tablareales;
+fvar
+
+  x := 2;
+  y := 3;
+  z := 4;
+  
+  a := x * (y + z);
+  b := a / 2.0;
+
+  condicion := x > z && x > y 
+        || // Aha
+        z > y;
+  
+  si condicion entonces
+    blq
+      repetir
+        blq
+          escribe(b);
+          x := x + 1
+        fblq
+      hasta x <= 10;
+      escribe(a)
+    fblq
+  sino
+    blq
+      escribe(b);
+      escribe(a)
+    fblq;
+  
+  // Comentarios de prueba
+
+  blq
+    var
+      entero: i, j;
+      real: c, d;
+      logico: flag;
+    fvar
+    
+    i := 0;
+    j := 1;
+    
+    mientras i <= 10 hacer
+      blq
+        si i / 2 = 2 entonces
+          blq
+            j := j + i;
+            escribe(j)
+          fblq
+        sino
+          escribe(1);
+        i := i + 1
+      fblq;
+    
+    c := 3.14;
+    d := c + 1.5;
+    
+    tablaenteros[0] := j - i * 6;
+    tablareales[2] := 3.5;
+    
+    escribe(tablaenteros[0]);
+    escribe(tablareales[2]);
+    
+    escribe(d)
+  fblq
+  
+falgoritmo

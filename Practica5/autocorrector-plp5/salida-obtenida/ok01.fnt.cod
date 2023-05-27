@@ -1,0 +1,175 @@
+mov #0 16000
+mov 16000 A
+addi #0
+rdi  @A
+mov #0 16000
+mov #3 16001
+mov #4 16002
+mov 16001 A
+muli 16002
+mov A 16003
+mov #2 16004
+mov 16003 A
+divi 16004
+mov A 16005
+mov #0 16006
+mov 16006 A
+addi #0
+mov @A 16007
+mov 16005 A
+addi 16007
+mov A 16008
+mov 16000 A
+addi #1
+mov 16008 @A
+mov #0 16000
+mov 16000 A
+addi #1
+mov @A 16001
+mov #2 16002
+mov #7 16003
+mov #2 16004
+mov 16003 A
+divi 16004
+mov A 16005
+mov 16002 A
+muli 16005
+mov A 16006
+mov 16001 A
+neqi 16006
+mov A 16007
+mov 16007 A
+jz L3
+mov #0 16008
+mov 16008 A
+addi #1
+mov @A 16009
+mov #6 16010
+mov 16009 A
+lssi 16010
+mov A 16011
+mov 16011 A
+jz L1
+mov #0 16012
+mov #0 16013
+mov 16013 A
+addi #0
+mov @A 16014
+mov #0 16015
+mov 16015 A
+addi #1
+mov @A 16016
+mov 16014 A
+muli 16016
+mov A 16017
+mov 16012 A
+addi #6
+mov 16017 @A
+mov #0 16012
+mov #0 16013
+mov 16013 A
+addi #0
+mov @A 16014
+mov #1 16015
+mov #0 A
+subi 16015
+mov A 16016
+mov 16014 A
+muli 16016
+mov A 16017
+mov 16012 A
+addi #2
+mov 16017 @A
+mov #0 16012
+mov #6 16013
+mov #2 16014
+mov 16013 A
+subi 16014
+mov A 16015
+mov #2 16016
+mov 16015 A
+subi 16016
+mov A 16017
+mov #2 16018
+mov #4 16019
+mov 16018 A
+muli 16019
+mov A 16020
+mov 16017 A
+addi 16020
+mov A 16021
+mov 16012 A
+addi #1
+mov 16021 @A
+jmp L2
+L1
+L2
+mov #0 16008
+mov #1 16009
+mov #0 16010
+mov 16009 A
+eqli 16010
+mov A 16011
+mov 16008 A
+addi #4
+mov 16011 @A
+jmp L4
+L3
+mov #0 16008
+mov #1 16009
+mov 16008 A
+addi #4
+mov 16009 @A
+L4
+mov #0 16000
+mov 16000 A
+addi #4
+mov @A 16001
+mov 16001A
+noti
+mov A 16002
+mov #0 16000
+mov 16000 A
+addi #4
+mov @A 16001
+mov 16001A
+noti
+mov A 16002
+mov #0 16003
+mov 16003 A
+addi #1
+mov @A 16004
+mov #10 16005
+mov 16004 A
+eqli 16005
+mov A 16006
+mov 16002 A
+andi 16006
+mov A 16007
+mov 16007 A
+jz L5
+mov #0 16008
+mov #5 16009
+mov #4 16010
+mov 16009 A
+gtri 16010
+mov A 16011
+mov 16008 A
+addi #4
+mov 16011 @A
+jmp L6
+L5
+L6
+mov #0 16000
+mov 16000 A
+addi #4
+mov @A 16001
+mov A 16001
+jz L7
+wrc #99
+jmp L8
+L7
+wrc #102
+L8
+wrl
+halt

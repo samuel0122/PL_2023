@@ -1,0 +1,18 @@
+algoritmo: miprograma
+var
+  entero: x;
+  real: y;
+  logico: z;
+  tabla 10 de entero: tablaenteros;
+  tabla 5 de real: tablareales;
+fvar
+
+
+  lee x;
+  lee y;
+  si x > y entonces
+    escribe(1)
+  sino
+    escribe(2)
+
+falgoritmo

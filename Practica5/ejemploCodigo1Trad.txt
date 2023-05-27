@@ -1,0 +1,32 @@
+mov #0 16000
+mov 16000 A
+addi #0
+rdi  @A
+mov #0 16000
+mov 16000 A
+addi #1
+rdr  @A
+mov #0 16000
+mov 16000 A
+addi #0
+mov @A 16001
+mov #0 16002
+mov 16002 A
+addi #1
+mov @A 16003
+mov 16001 A
+itor
+gtrr 16003
+mov A 16004
+mov 16004 A
+jz L1
+mov #1 16005
+wri 16005
+wrl
+jmp L2
+L1
+mov #2 16006
+wri 16006
+wrl
+L2
+halt

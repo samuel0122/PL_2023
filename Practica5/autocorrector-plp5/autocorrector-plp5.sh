@@ -10,6 +10,10 @@ OBT=salida-obtenida # Directorio con los ficheros obtenidos tras la ejecución d
 mata=/tmp/mata
 comparefiles=/tmp/comparefiles
 
+# -------------- copia .y y .l de la carpeta anterior
+# rm *.y
+# rm *.l
+
 # -------------- generar y compilar los ficheros auxiliares mata.c y comparefiles.cc -----
 function genMataComparefiles() {
 

@@ -1,0 +1,48 @@
+algoritmo: programa;
+var
+  entero: x, y, z;
+  real: a, b;
+  logico: condicion;
+  tabla 5 de entero: tabla_enteros;
+  tabla 3 de real: tabla_reales;
+fvar
+
+programa:
+  lee(x);
+  lee(y);
+  
+  z := x + y;
+  
+  escribe("El resultado de la suma es: ", z);
+  
+  si z > 10 entonces
+    blq
+      escribe("El resultado es mayor que 10");
+      escribe("Fin del programa");
+    fblq;
+  sino
+    blq
+      escribe("El resultado es menor o igual que 10");
+      escribe("Fin del programa");
+    fblq;
+  
+  var
+    entero: i;
+    real: c;
+    logico: flag;
+  fvar
+  
+  i := 0;
+  flag := cierto;
+  
+  mientras i <= 5 hacer
+    si flag entonces
+      c := i * 2.5;
+      escribe("El valor de c es: ", c);
+    sino
+      escribe("La bandera es falsa");
+    i := i + 1;
+  
+  escribe("¡Fin del programa!");
+  
+falgoritmo.
